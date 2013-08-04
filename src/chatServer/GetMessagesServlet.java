@@ -1,12 +1,10 @@
 package chatServer;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,15 +14,20 @@ public class GetMessagesServlet extends ChatServlet {
 	private static final long serialVersionUID = 1L;
        
 	@Override
-	protected JSONObject handleGet(HttpServletRequest request, HttpServletResponse response) throws InvalidRequestException, SQLException {
+	protected JSONObject handleGet(ChatRequest request, ChatResponse response) throws InvalidRequestException, SQLException {
 		
-		Statement st = _conn.createStatement();
-		ResultSet rs = st.executeQuery("SELECT * FROM messages");
+		String query = "SELECT * FROM messages WHERE timeSent >= ?";
+		PreparedStatement stmnt = _conn.prepareStatement(query);
+
+		stmnt.setString(1, request.getRequiredParameter("after"));
+		
+		ResultSet rs = stmnt.executeQuery();
 		
 		JSONArray messageArray = new JSONArray();
         while (rs.next()) {
         	JSONObject message = new JSONObject();
-        	message.put("message", rs.getString("message"));
+        	message.put("message", rs.getString("body"));
+        	message.put("sender", rs.getString("sender"));
         	messageArray.put(message);
         }
         JSONObject results = new JSONObject();

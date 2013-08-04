@@ -3,19 +3,42 @@ package chatServer;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/resetDB")
 public class ResetDBServlet extends ChatServlet {
 	private static final long serialVersionUID = 1L;
        
 	@Override
-	protected String handleGet(HttpServletRequest request, HttpServletResponse response) throws InvalidRequestException, SQLException {
+	protected String handleGet(ChatRequest request, ChatResponse response) throws InvalidRequestException, SQLException {
 		
 		Statement st = _conn.createStatement();
+
 		st.executeUpdate("DROP TABLE IF EXISTS messages");
-		st.executeUpdate("CREATE TABLE messages (message TEXT)");
+		st.executeUpdate("DROP TABLE IF EXISTS conversationUsers");
+		st.executeUpdate("DROP TABLE IF EXISTS conversations");
+		st.executeUpdate("DROP TABLE IF EXISTS users");
+
+		st.executeUpdate("CREATE TABLE conversations (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL)");
+		st.executeUpdate("CREATE TABLE users (email VARCHAR(50) PRIMARY KEY NOT NULL)");
+		st.executeUpdate("CREATE TABLE messages (body TEXT, timeSent DATETIME, timeReceived DATETIME, "
+				+ "conversation INT, sender VARCHAR(50), "
+				+ "FOREIGN KEY (conversation) REFERENCES conversations(id), "
+				+ "FOREIGN KEY (sender) REFERENCES users(email))");
+		st.executeUpdate("CREATE TABLE conversationUsers (user VARCHAR(50), conversation INT, "
+				+ "FOREIGN KEY (user) REFERENCES users(email), "
+				+ "FOREIGN KEY (conversation) REFERENCES conversations(id))");
+		
+		st.executeUpdate("INSERT INTO users VALUES (\"konrad@EKCHAT.com\")");
+		st.executeUpdate("INSERT INTO users VALUES (\"emmanuel@EKCHAT.com\")");
+		st.executeUpdate("INSERT INTO users VALUES (\"test@EKCHAT.com\")");
+		
+		st.executeUpdate("INSERT INTO conversations VALUES ()");
+		
+		st.executeUpdate("INSERT INTO conversationUsers VALUES (\"konrad@EKCHAT.com\", 1)");
+		st.executeUpdate("INSERT INTO conversationUsers VALUES (\"emmanuel@EKCHAT.com\", 1)");
+		
+		st.executeUpdate("INSERT INTO messages VALUES (\"Hello World!\", NOW(), NOW(), "
+				+ "1, \"konrad@EKCHAT.com\")");
 		
 		return "OK";
 	}

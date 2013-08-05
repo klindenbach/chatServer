@@ -20,7 +20,7 @@ public class ResetDBServlet extends ChatServlet {
 
 		st.executeUpdate("CREATE TABLE conversations (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL)");
 		st.executeUpdate("CREATE TABLE users (email VARCHAR(50) PRIMARY KEY NOT NULL)");
-		st.executeUpdate("CREATE TABLE messages (body TEXT, timeSent DATETIME, timeReceived DATETIME, "
+		st.executeUpdate("CREATE TABLE messages (body TEXT, timeSent INT(11), timeReceived INT(11), "
 				+ "conversation INT, sender VARCHAR(50), "
 				+ "FOREIGN KEY (conversation) REFERENCES conversations(id), "
 				+ "FOREIGN KEY (sender) REFERENCES users(email))");
@@ -37,7 +37,7 @@ public class ResetDBServlet extends ChatServlet {
 		st.executeUpdate("INSERT INTO conversationUsers VALUES (\"konrad@EKCHAT.com\", 1)");
 		st.executeUpdate("INSERT INTO conversationUsers VALUES (\"emmanuel@EKCHAT.com\", 1)");
 		
-		st.executeUpdate("INSERT INTO messages VALUES (\"Hello World!\", NOW(), NOW(), "
+		st.executeUpdate("INSERT INTO messages VALUES (\"Hello World!\", UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()), "
 				+ "1, \"konrad@EKCHAT.com\")");
 		
 		return "OK";

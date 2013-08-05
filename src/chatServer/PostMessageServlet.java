@@ -13,7 +13,7 @@ public class PostMessageServlet extends ChatServlet {
 	@Override
 	protected void handlePost(ChatRequest request, ChatResponse response) throws SQLException, IOException, InvalidRequestException {
 		String query = "INSERT INTO messages (body, sender, timeSent, timeReceived, conversation)"
-				+ " VALUES (?, ?, ?, NOW(), ?)";
+				+ " VALUES (?, ?, ?, UNIX_TIMESTAMP(NOW()), ?)";
 		
 		PreparedStatement stmnt = _conn.prepareStatement(query);
 		stmnt.setString(1, request.getPostString());

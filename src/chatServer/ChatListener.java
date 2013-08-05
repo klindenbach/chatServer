@@ -17,7 +17,8 @@ public class ChatListener implements ServletContextListener {
             Driver driver = drivers.nextElement();
             try {
                 DriverManager.deregisterDriver(driver);
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) {
                 System.out.println("Error deregistering driver " + driver);
             }
         }

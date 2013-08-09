@@ -16,10 +16,11 @@ public class GetMessagesServlet extends ChatServlet {
 	@Override
 	protected JSONObject handleGet(ChatRequest request, ChatResponse response) throws InvalidRequestException, SQLException {
 		
-		String query = "SELECT * FROM messages WHERE timeSent >= ?";
+		String query = "SELECT * FROM messages WHERE timeSent >= ? AND conversation = ?";
 		PreparedStatement stmnt = _conn.prepareStatement(query);
 
 		stmnt.setString(1, request.getRequiredParameter("after"));
+		stmnt.setString(2, request.getRequiredParameter("conversation"));
 		
 		ResultSet rs = stmnt.executeQuery();
 		
